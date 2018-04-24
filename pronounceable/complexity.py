@@ -1,6 +1,7 @@
 from metaphone import doublemetaphone
 from nltk.corpus import cmudict
 import yaml
+import string
 
 from pronounceable.dir import database_path
 
@@ -46,20 +47,34 @@ class Complexity(Pronounceablity):
         super().__init__(leet)
 
     def complexity(self, password):
-        upper = ''
-        lower = ''
-        non_char = ''
-        for char in password:
-            if char.isupper():
-                upper += char
-            elif char.islower():
-                lower += char
-            else:
-                non_char += char
+        return self.non_char(password) \
+               + self.syllable(password) \
+               - self.consecutiveness(password)
 
-        return abs(len(upper) - len(lower)) - min([len(upper), len(lower)]) \
-               + len(non_char) \
-               + self.syllable(password)
+    @staticmethod
+    def consecutiveness(password):
+        """
+        Consecutiveness is the enemy of entropy, but makes it easier to remember.
+        :param password:
+        :return:
+        """
+        consec = 0
+        for i in range(len(password) - 3):
+            if all([char.islower() for char in password[i:i+3]]):
+                consec += 1
+            elif all([char.islower() for char in password[i:i+3]]):
+                consec += 1
+
+        return consec
+
+    @staticmethod
+    def non_char(password):
+        n = 0
+        for char in password:
+            if char not in string.ascii_letters:
+                n += 1
+
+        return n
 
 
 if __name__ == '__main__':
