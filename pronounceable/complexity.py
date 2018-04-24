@@ -47,7 +47,7 @@ class Complexity(Pronounceablity):
         super().__init__(leet)
 
     def complexity(self, password):
-        return self.non_char(password) \
+        return 2 * self.non_char(password) \
                + self.syllable(password) \
                - self.consecutiveness(password)
 
