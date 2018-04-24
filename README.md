@@ -35,4 +35,4 @@
 
 - Human-readable password mnemonics -- https://github.com/patarapolw/memorable-password
 - Security-side of password -- https://github.com/patarapolw/passwordstrength
-- Adapting the humanized password to the password policy - https://github.com/patarapolw/leetpass
+- Adapting the humanized password to the computerized password policy - https://github.com/patarapolw/leetpass
