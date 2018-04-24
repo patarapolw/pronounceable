@@ -27,8 +27,11 @@
 
 ## Based on
 
-https://github.com/greghaskins/gibberish
+- https://github.com/greghaskins/gibberish
+- https://github.com/ricardofalasca/passpro-generator
+- NLTK - CMUdict
 
-https://github.com/ricardofalasca/passpro-generator
+## More on password
 
-NLTK - CMUdict
+- Human-readable password mnemonics -- https://github.com/patarapolw/memorable-password
+- Security-side of password -- https://github.com/patarapolw/passwordstrength
