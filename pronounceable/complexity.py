@@ -57,7 +57,7 @@ class Complexity(Pronounceablity):
             else:
                 non_char += char
 
-        return abs(len(upper) - len(lower)) - max([len(upper), len(lower)]) \
+        return abs(len(upper) - len(lower)) - min([len(upper), len(lower)]) \
                + len(non_char) \
                + self.syllable(password)
 

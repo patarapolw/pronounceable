@@ -15,11 +15,13 @@ Generate a random pronounceable word using Python 3 and secrets module (falls ba
 6
 >>> pr.syllable('hello')
 2
+>>> pr.syllable('gloust')
+4
 >>> complexity = Complexity()
 >>> complexity.complexity('D7!rcc&umnsd')
-6
+16
 >>> complexity.complexity('a4ILot#h')
-4
+6
 ```
 
 ## Based on

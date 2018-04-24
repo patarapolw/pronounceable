@@ -9,11 +9,13 @@
 6
 >>> pr.syllable('hello')
 2
+>>> pr.syllable('gloust')
+4
 >>> complexity = Complexity()
 >>> complexity.complexity('D7!rcc&umnsd')
-6
+16
 >>> complexity.complexity('a4ILot#h')
-4
+6
 """
 import doctest
 doctest.testmod()
