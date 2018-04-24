@@ -30,8 +30,8 @@ def all_consonants():
     for ia, a in enumerate(string.ascii_lowercase):
         for ib, b in enumerate(string.ascii_lowercase):
             if DIGRAPHS_FREQUENCY[ib][ia] > 0:
-                if a not in 'aeiou' and b not in 'aeiouy':
-                    yield (a + b)
+                if b not in 'aeiou' and a not in 'aeiouy':
+                    yield (b + a)
 
 
 def double_vowels():

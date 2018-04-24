@@ -8,7 +8,7 @@ from pronounceable.digraph import DIGRAPHS_FREQUENCY
 from pronounceable.components import INITIAL_CONSONANTS, FINAL_CONSONANTS, double_vowels
 
 
-class Pronounceable:
+class PronounceableWord:
     """
     Based on https://github.com/ricardofalasca/passpro-generator, but in Python 3
 
