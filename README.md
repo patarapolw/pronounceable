@@ -29,3 +29,5 @@ Generate a random pronounceable word using Python 3 and secrets module (falls ba
 https://github.com/greghaskins/gibberish
 
 https://github.com/ricardofalasca/passpro-generator
+
+NLTK - CMUdict
