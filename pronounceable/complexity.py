@@ -90,14 +90,18 @@ class Complexity(Pronounceablity):
         0.4533919999999999
         """
         def add_commonness_value(keywords):
+            nonlocal commonness_value
+
             commonness_list = []
             for keyword in keywords:
                 if keyword in self.common_words:
-                    commonness_list.append(self.common_words.index(keyword) / commonness_of_non_word)
+                    commonness_list.append(self.common_words.index(keyword)/commonness_of_non_word)
                 else:
-                    commonness_list.append(1)
+                    commonness_list.append(commonness_of_non_word)
 
-            commonness_values.append(sum(commonness_list)/len(commonness_list))
+            value = sum(commonness_list)/len(commonness_list)
+            if value < commonness_value:
+                commonness_value = value
 
         def recurse(previous):
             nonlocal separators, depth
@@ -120,7 +124,7 @@ class Complexity(Pronounceablity):
 
             depth -= 1
 
-        commonness_values = []
+        commonness_value = 1
         for number_of_separators in range(len(password)//min_word_fragment_length):
             if number_of_separators == 0:
                 keywords = list()
@@ -131,7 +135,7 @@ class Complexity(Pronounceablity):
                 depth = -1
                 recurse(0)
 
-        return min(commonness_values)
+        return commonness_value
 
     @staticmethod
     def consecutiveness(password, consecutive_length=3):
