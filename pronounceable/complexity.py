@@ -105,7 +105,7 @@ class Complexity(Pronounceablity):
             return 0
 
     @staticmethod
-    def consecutiveness(password, consecutive_length=3, base_length=8):
+    def consecutiveness(password, consecutive_length=3):
         """
         Consecutiveness is the enemy of entropy, but makes it easier to remember.
         :param str password:
@@ -124,7 +124,7 @@ class Complexity(Pronounceablity):
             elif all([char.islower() for char in password[i:i+consecutive_length]]):
                 consec += 1
 
-        return consec * (base_length / len(password)) / (base_length - consecutive_length)
+        return consec / (len(password) - consecutive_length)
 
     @staticmethod
     def non_char(password):
