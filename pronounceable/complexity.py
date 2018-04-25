@@ -49,11 +49,14 @@ class Complexity(Pronounceablity):
         if leet is None:
             with open(database_path('leetspeak.yaml')) as f:
                 leet = yaml.safe_load(f)['min']
+        self.common_words = dict()
         if common_words is None:
             with open(database_path('google-10000-english.txt')) as f:
-                self.common_words = f.read().strip().split('\n')
+                for i, row in enumerate(f):
+                    self.common_words[row.strip()] = i
         else:
-            self.common_words = common_words
+            for i, word in enumerate(common_words):
+                self.common_words[word] = i
         super().__init__(leet)
 
     def absolute_complexity(self, password):
@@ -92,12 +95,9 @@ class Complexity(Pronounceablity):
         def add_commonness_value(keywords):
             nonlocal commonness_value
 
-            commonness_list = []
+            commonness_list = set()
             for keyword in keywords:
-                if keyword in self.common_words:
-                    commonness_list.append(self.common_words.index(keyword)/commonness_of_non_word)
-                else:
-                    commonness_list.append(commonness_of_non_word)
+                commonness_list.add(self.common_words.get(keyword, commonness_of_non_word)/commonness_of_non_word)
 
             value = sum(commonness_list)/len(commonness_list)
             if value < commonness_value:
@@ -106,20 +106,18 @@ class Complexity(Pronounceablity):
         def recurse(previous):
             nonlocal separators, depth
             depth += 1
-            separators.append(-1)
 
             for current in range(previous + min_word_fragment_length, len(password) - min_word_fragment_length + 1):
-                separators[depth] = current
+                separators.setdefault(depth, current)
 
                 if depth < number_of_separators-1:
                     recurse(current)
                 else:
-                    separators = separators[:depth+1]
-                    keywords = list()
-                    keywords.append(password[:separators[0]])
-                    for i in range(len(separators)-1):
-                        keywords.append(password[separators[i]:separators[i+1]])
-                    keywords.append(password[separators[-1]:])
+                    keywords = set()
+                    keywords.add(password[:separators[0]])
+                    for i in range(depth):
+                        keywords.add(password[separators[i]:separators[i+1]])
+                    keywords.add(password[separators[depth]:])
                     add_commonness_value(keywords)
 
             depth -= 1
@@ -127,11 +125,11 @@ class Complexity(Pronounceablity):
         commonness_value = 1
         for number_of_separators in range(len(password)//min_word_fragment_length):
             if number_of_separators == 0:
-                keywords = list()
-                keywords.append(password)
+                keywords = set()
+                keywords.add(password)
                 add_commonness_value(keywords)
             else:
-                separators = []
+                separators = dict()
                 depth = -1
                 recurse(0)
 
