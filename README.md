@@ -20,9 +20,9 @@
 4
 >>> complexity = Complexity()
 >>> complexity.complexity('D7!rcc&umnsd')
-2.9808078553894224
+3.6067295181135437
 >>> complexity.complexity('a4ILot#h')
-2.2292457040839095
+3.150181477846006
 >>> complexity.complexity('password')
 1.0
 ```

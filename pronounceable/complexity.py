@@ -73,9 +73,15 @@ class Complexity(Pronounceablity):
         :param password:
         :param int min_word_fragment_length:
         :return int: in range 0-1
+        >>> Complexity().commonness('thethethe')
+        1
+        >>> Complexity().commonness('asdfegu')
+        0
         >>> Complexity().commonness('helloworld')
-        0.7304599999999999
+        0.8041333333333333
         """
+        min_word_fragment_length -= 1
+
         def recurse_keyword(i_depth):
             nonlocal depth, keywords
 
@@ -89,7 +95,7 @@ class Complexity(Pronounceablity):
 
         keywords = set()
         for n in range(len(password)//min_word_fragment_length):
-            for i_n_1 in range(len(password)):
+            for i_n_1 in range(len(password)-min_word_fragment_length):
                 depth = 1
                 keywords.add(password[i_n_1:].lower())
                 recurse_keyword(i_n_1)
@@ -138,4 +144,4 @@ class Complexity(Pronounceablity):
 
 if __name__ == '__main__':
     c = Complexity()
-    print(c.complexity('password'))
+    print(c.commonness('password'))
