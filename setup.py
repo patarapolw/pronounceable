@@ -23,7 +23,8 @@ setup(
     install_requires=install_requires,  # Optional
     python_requires='>=3',
     extras_require={  # Optional
-        'analysis': ['memorable_password', 'randomsentence']
+        'analysis': ['git+https://github.com/patarapolw/memorable-password.git',
+                     'git+https://github.com/patarapolw/randomsentence.git']
     },
     package_data={  # Optional
         'pronounceable': ['database/*'],
