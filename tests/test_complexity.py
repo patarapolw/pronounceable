@@ -12,7 +12,7 @@ pr = PronounceableWord()
 c = Complexity()
 
 
-def test_rareness_random(length=50):
+def test_rareness_random(length=40):
     """
 
     :param length:

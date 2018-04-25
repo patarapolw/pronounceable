@@ -82,7 +82,7 @@ class Complexity(Pronounceablity):
         >>> Complexity().rareness('poison')  # the last word in Google's list
         0.19998
         >>> Complexity().rareness('asdfegu')
-        1.0
+        1
         >>> Complexity().rareness('helloworld')
         0.02537
         >>> Complexity().rareness('verylongpassword')
@@ -90,7 +90,7 @@ class Complexity(Pronounceablity):
         >>> Complexity().rareness('averylongpassword')
         0.26282000000000005
         >>> Complexity().rareness('djkhsdjkashdaslkdhas')
-        0.4533919999999999
+        0.31674
         """
         def add_commonness_value(keywords):
             nonlocal commonness_value
@@ -114,13 +114,18 @@ class Complexity(Pronounceablity):
                     recurse(current)
                 else:
                     keywords = set()
-                    keywords.add(password[:separators[0]])
+                    keywords.add(subwords[(0, separators[0])])
                     for i in range(depth):
-                        keywords.add(password[separators[i]:separators[i+1]])
-                    keywords.add(password[separators[depth]:])
+                        keywords.add(subwords[(separators[i], separators[i+1])])
+                    keywords.add(subwords[(separators[depth], len(password))])
                     add_commonness_value(keywords)
 
             depth -= 1
+
+        subwords = dict()
+        for i_front in range(0, len(password) - min_word_fragment_length + 1):
+            for i_back in range(i_front + min_word_fragment_length, len(password) + 1):
+                subwords[(i_front, i_back)] = password[i_front:i_back]
 
         commonness_value = 1
         for number_of_separators in range(len(password)//min_word_fragment_length):
