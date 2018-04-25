@@ -40,33 +40,94 @@ class Pronounceablity:
 
 
 class Complexity(Pronounceablity):
-    def __init__(self, leet=None):
+    def __init__(self, leet=None, common_words=None):
+        """
+
+        :param dict leet: a dictionary containing leet substitutions (see leetspeak.yaml)
+        :param list common_words: a list containing common words, sorted by commonness
+        """
         if leet is None:
             with open(database_path('leetspeak.yaml')) as f:
                 leet = yaml.safe_load(f)['min']
+        if common_words is None:
+            with open(database_path('google-10000-english.txt')) as f:
+                self.common_words = f.read().strip().split('\n')
+        else:
+            self.common_words = common_words
         super().__init__(leet)
 
-    def complexity(self, password):
-        return 2 * self.non_char(password) \
-               + self.syllable(password) \
-               - self.consecutiveness(password)
+    def complexity(self, password, base_complexity=5.974666666666668):
+        """
+
+        :param str password:
+        :param int base_complexity: complexity of 'password' == 5.974666666666668
+        :return int:
+        """
+        return (2 * self.non_char(password)
+                + self.syllable(password)
+                + 5 * (1 - self.consecutiveness(password))
+                + 10 * (1 - self.commonness(password))
+                # + len(password)
+                ) / base_complexity
+
+    def commonness(self, password, min_word_fragment_length=3):
+        """
+
+        :param password:
+        :param int min_word_fragment_length:
+        :return int: in range 0-1
+        >>> Complexity().commonness('helloworld')
+        0.7304599999999999
+        """
+        def recurse_keyword(i_depth):
+            nonlocal depth, keywords
+
+            for i_depth_1 in range(i_depth - min_word_fragment_length*depth):
+                if depth < n:
+                    depth += 1
+                    keywords.add(password[i_depth_1:i_depth].lower())
+                    recurse_keyword(i_depth_1)
+                else:
+                    keywords.add(password[0:i_depth].lower())
+
+        keywords = set()
+        for n in range(len(password)//min_word_fragment_length):
+            for i_n_1 in range(len(password)):
+                depth = 1
+                keywords.add(password[i_n_1:].lower())
+                recurse_keyword(i_n_1)
+
+        commonness_list = []
+        for keyword in keywords:
+            if keyword in self.common_words:
+                commonness_list.append(1 - (self.common_words.index(keyword) / 10000))
+
+        if len(commonness_list) > 0:
+            return sum(commonness_list)/len(commonness_list)
+        else:
+            return 0
 
     @staticmethod
-    def consecutiveness(password):
+    def consecutiveness(password, consecutive_length=3, base_length=8):
         """
         Consecutiveness is the enemy of entropy, but makes it easier to remember.
-        :param password:
-        :return:
+        :param str password:
+        :param int consecutive_length: length of the segment to be uniform to consider loss of entropy
+        :param int base_length: usual length of the password
+        :return int: in range 0-1
+        >>> Complexity.consecutiveness('password')
+        1.0
+        >>> Complexity.consecutiveness('PaSsWoRd')
+        0.0
         """
         consec = 0
-        for i in range(len(password) - 3):
-            if all([char.islower() for char in password[i:i+3]]):
+        for i in range(len(password) - consecutive_length):
+            if all([char.islower() for char in password[i:i+consecutive_length]]):
                 consec += 1
-            elif all([char.islower() for char in password[i:i+3]]):
+            elif all([char.islower() for char in password[i:i+consecutive_length]]):
                 consec += 1
 
-        # Normalize it with 8 as the base length of the password
-        return consec * (8 / len(password))
+        return consec * (base_length / len(password)) / (base_length - consecutive_length)
 
     @staticmethod
     def non_char(password):
@@ -80,4 +141,4 @@ class Complexity(Pronounceablity):
 
 if __name__ == '__main__':
     c = Complexity()
-    print(c.syllable('hello'))
+    print(c.complexity('password'))
