@@ -12,7 +12,7 @@ pr = PronounceableWord()
 c = Complexity()
 
 
-def test_rareness_random(length=40):
+def test_rareness_random(length=50):
     """
 
     :param length:
@@ -20,8 +20,9 @@ def test_rareness_random(length=40):
     length=10: 0.0004 seconds per test_rareness_random
     length=20: 0.0055 seconds per test_rareness_random
     length=30: 0.3114 seconds per test_rareness_random
-    length=40: 17.6184 seconds per test_rareness_random
-    length=50:
+    length=40: 4.1558 seconds per test_rareness_random
+    length=45: 32.1798 seconds per test_rareness_random
+    length=50: 219.3345 seconds per test_rareness_random
     """
     word = ''.join([choice(string.ascii_lowercase) for _ in range(length)])
     # word = 'corkvisitingimplementinggreecebizratealternatives'

@@ -104,21 +104,24 @@ class Complexity(Pronounceablity):
                 commonness_value = value
 
         def recurse(previous):
-            nonlocal separators, depth
+            nonlocal separators, depth, used_separators
             depth += 1
 
             for current in range(previous + min_word_fragment_length, len(password) - min_word_fragment_length + 1):
-                separators.setdefault(depth, current)
+                separators[depth] = current
 
                 if depth < number_of_separators-1:
                     recurse(current)
                 else:
-                    keywords = set()
-                    keywords.add(subwords[(0, separators[0])])
-                    for i in range(depth):
-                        keywords.add(subwords[(separators[i], separators[i+1])])
-                    keywords.add(subwords[(separators[depth], len(password))])
-                    add_commonness_value(keywords)
+                    if separators not in used_separators:
+                        keywords = set()
+                        keywords.add(subwords[(0, separators[0])])
+                        for i in range(depth):
+                            keywords.add(subwords[(separators[i], separators[i + 1])])
+                        keywords.add(subwords[(separators[depth], len(password))])
+                        add_commonness_value(keywords)
+
+                        used_separators.append(separators)
 
             depth -= 1
 
@@ -134,7 +137,8 @@ class Complexity(Pronounceablity):
                 keywords.add(password)
                 add_commonness_value(keywords)
             else:
-                separators = dict()
+                separators = [-1 for _ in range(number_of_separators + 1)]
+                used_separators = list()
                 depth = -1
                 recurse(0)
 
