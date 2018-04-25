@@ -13,11 +13,15 @@
 4
 >>> complexity = Complexity()
 >>> complexity.complexity('D7!rcc&umnsd')
-3.6067295181135437
+2.8604533275400104
 >>> complexity.complexity('a4ILot#h')
-3.150181477846006
+2.4983706278514015
 >>> complexity.complexity('password')
 1.0
+>>> complexity.complexity('thisisabadpassword')
+1.1620410601781446
+>>> complexity.complexity('anejpwnrqpqzonijre')
+2.4983706278514015
 """
 import doctest
 doctest.testmod()

@@ -60,55 +60,76 @@ class Complexity(Pronounceablity):
         return (2 * self.non_char(password)
                 + self.syllable(password)
                 + 5 * (1 - self.consecutiveness(password))
-                + 10 * (1 - self.commonness(password))
+                + 10 * self.rareness(password)
                 # + len(password)
                 )
 
     def complexity(self, password, relative_to='password'):
         return self.absolute_complexity(password) / self.absolute_complexity(relative_to)
 
-    def commonness(self, password, min_word_fragment_length=3):
+    def rareness(self, password, min_word_fragment_length=3):
         """
 
         :param password:
         :param int min_word_fragment_length:
         :return int: in range 0-1
-        >>> Complexity().commonness('thethethe')
+        >>> Complexity().rareness('thethethe')
+        0.0
+        >>> Complexity().rareness('asdfegu')
         1
-        >>> Complexity().commonness('asdfegu')
-        0
-        >>> Complexity().commonness('helloworld')
-        0.8041333333333333
+        >>> Complexity().rareness('helloworld')
+        0.1113
         """
-        min_word_fragment_length -= 1
+        def add_commonness_value():
+            commonness_list = []
+            for keyword in keywords:
+                if keyword in self.common_words:
+                    commonness_list.append(self.common_words.index(keyword) / len(self.common_words))
 
-        def recurse_keyword(i_depth):
-            nonlocal depth, keywords
+            if len(commonness_list) > 0:
+                commonness_values.append(sum(commonness_list))
 
-            for i_depth_1 in range(i_depth - min_word_fragment_length*depth):
-                if depth < n:
-                    depth += 1
-                    keywords.add(password[i_depth_1:i_depth].lower())
-                    recurse_keyword(i_depth_1)
+        def recurse_word_separator(i_n):
+            nonlocal depth, separators, keywords
+
+            depth += 1
+            for i_n_1 in range(i_n + 3,
+                               len(password) - (len(separators)-depth)*min_word_fragment_length + 1):
+                separators.append(i_n_1)
+                if depth >= len(separators) - 1:
+                    keywords = list()
+                    keywords.append(password[:separators[0]])
+                    for i in range(len(separators)-1):
+                        keywords.append(password[separators[i]:separators[i+1]])
+                    keywords.append(password[separators[-1]:])
+                    add_commonness_value()
                 else:
-                    keywords.add(password[0:i_depth].lower())
+                    recurse_word_separator(i_n_1)
 
-        keywords = set()
-        for n in range(len(password)//min_word_fragment_length):
-            for i_n_1 in range(len(password)-min_word_fragment_length):
-                depth = 1
-                keywords.add(password[i_n_1:].lower())
-                recurse_keyword(i_n_1)
+        commonness_values = []
+        for number_of_separators in range(len(password)//min_word_fragment_length + 1):
+            if number_of_separators == 0:
+                keywords = list()
+                keywords.append(password)
+                add_commonness_value()
+            elif number_of_separators == 1:
+                for i in range(min_word_fragment_length, len(password) - min_word_fragment_length + 1):
+                    keywords = list()
+                    keywords.append(password[:i])
+                    keywords.append(password[i:])
+                    add_commonness_value()
+            else:
+                separators = []
+                for i in range(min_word_fragment_length,
+                               len(password) - number_of_separators*min_word_fragment_length + 1):
+                    depth = 0
+                    separators.append(i)
+                    recurse_word_separator(i)
 
-        commonness_list = []
-        for keyword in keywords:
-            if keyword in self.common_words:
-                commonness_list.append(1 - (self.common_words.index(keyword) / 10000))
-
-        if len(commonness_list) > 0:
-            return sum(commonness_list)/len(commonness_list)
+        if len(commonness_values) > 0:
+            return max(commonness_values)/len(commonness_values)
         else:
-            return 0
+            return 1
 
     @staticmethod
     def consecutiveness(password, consecutive_length=3):
@@ -143,5 +164,5 @@ class Complexity(Pronounceablity):
 
 
 if __name__ == '__main__':
-    c = Complexity()
-    print(c.commonness('password'))
+    import doctest
+    doctest.testmod()
