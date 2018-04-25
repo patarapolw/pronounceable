@@ -56,18 +56,18 @@ class Complexity(Pronounceablity):
             self.common_words = common_words
         super().__init__(leet)
 
-    def complexity(self, password, base_complexity=5.974666666666668):
+    def complexity(self, password, base_complexity=13.974666666666668):
         """
 
         :param str password:
-        :param int base_complexity: complexity of 'password' == 5.974666666666668
+        :param int base_complexity: complexity of 'password' == 13.974666666666668
         :return int:
         """
         return (2 * self.non_char(password)
                 + self.syllable(password)
                 + 5 * (1 - self.consecutiveness(password))
                 + 10 * (1 - self.commonness(password))
-                # + len(password)
+                + len(password)
                 ) / base_complexity
 
     def commonness(self, password, min_word_fragment_length=3):
