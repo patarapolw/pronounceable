@@ -64,8 +64,8 @@ class Complexity(Pronounceablity):
                 # + len(password)
                 )
 
-    def complexity(self, password):
-        return self.absolute_complexity(password) / self.absolute_complexity('password')
+    def complexity(self, password, relative_to='password'):
+        return self.absolute_complexity(password) / self.absolute_complexity(relative_to)
 
     def commonness(self, password, min_word_fragment_length=3):
         """
