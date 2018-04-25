@@ -6,7 +6,7 @@
 ## Usage
 
 ```pycon
->>> from pronounceable import PronounceableWord, generate_word, Pronounceablity, Complexity
+>>>> from pronounceable import PronounceableWord, generate_word, Pronounceablity, Complexity
 >>> PronounceableWord().length(8, 15)
 'terhtsadathe'
 >>> generate_word()
@@ -20,11 +20,11 @@
 4
 >>> complexity = Complexity()
 >>> complexity.complexity('D7!rcc&umnsd')
-7
+11.0
 >>> complexity.complexity('a4ILot#h')
-7
+8.0
 >>> complexity.complexity('password')
--1
+-1.0
 ```
 
 ## Based on

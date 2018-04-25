@@ -8,8 +8,6 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 install_requires = ['nltk', 'PyYAML', 'metaphone']
-# pytest_requires = ['xdist', 'repeat', 'timeout', 'doctestplus']
-# tests_require = ['pytest'] + ['pytest-{}'.format(req) for req in pytest_requires]
 
 setup(
     name='pronounceable',  # Required
@@ -21,13 +19,12 @@ setup(
     author='Pacharapol Withayasakpunt',  # Optional
     author_email='patarapolw@gmail.com',  # Optional
     keywords='password password-analysis nltk word-synthesis',  # Optional
-    packages=find_packages(exclude=['tests', 'dev']),  # Required
+    packages=find_packages(exclude=['tests', 'dev', 'analysis']),  # Required
     install_requires=install_requires,  # Optional
     python_requires='>=3',
-    # tests_require=pytest_requires,
-    # extras_require={  # Optional
-    #     'test': ['tox'] + pytest_requires,
-    # },
+    extras_require={  # Optional
+        'analysis': ['memorable_password', 'randomsentence']
+    },
     package_data={  # Optional
         'pronounceable': ['database/*'],
     },

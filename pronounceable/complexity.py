@@ -65,7 +65,8 @@ class Complexity(Pronounceablity):
             elif all([char.islower() for char in password[i:i+3]]):
                 consec += 1
 
-        return consec
+        # Normalize it with 8 as the base length of the password
+        return consec * (8 / len(password))
 
     @staticmethod
     def non_char(password):
