@@ -2,6 +2,7 @@ from metaphone import doublemetaphone
 from nltk.corpus import cmudict
 import yaml
 import string
+import math
 
 from pronounceable.dir import database_path
 
@@ -70,34 +71,96 @@ class Complexity(Pronounceablity):
     def complexity(self, password, relative_to='password'):
         return self.absolute_complexity(password) / self.absolute_complexity(relative_to)
 
-    def rareness(self, password, min_word_fragment_length=3, commonness_of_non_word=50000):
+    def rareness(self, password, min_word_fragment_length=3, absolute_rareness_cutoff=0.1):
         """
+
+        :param password:
+        :param int min_word_fragment_length:
+        :param float absolute_rareness_cutoff:
+        :return int: in range 0-1
+        >>> Complexity().rareness('thethethe')
+        0.0
+        >>> Complexity().rareness('poison')  # the last word in Google's list
+        0.19649219348046737
+        >>> Complexity().rareness('asdfegu')
+        1
+        >>> Complexity().rareness('helloworld')
+        0.1644235716987842
+
+        # Good words should eval less than 0.2
+        >>> Complexity().rareness('verylongpassword')
+        0.16626577386889024
+        >>> Complexity().rareness('averylongpassword')
+        0.1622989831750065
+        >>> Complexity().rareness('ultrasupersuperlonglonglongpasswordlongerthanlonger')
+        0.23084370223197
+
+        # Half gibberish should not eval 1
+        >>> Complexity().rareness('ultrasuperlongpasswordsdhsdhjksdskdhskjdhakdhsadjdi')
+        0.40519672587970423
+
+        # Gibberish of various length should eval approx. 1
+        >>> Complexity().rareness('faxwyhxihs')
+        1
+        >>> Complexity().rareness('aarhzcrzncseexdeccli')
+        1
+        >>> Complexity().rareness('qdhlivjpyyobhowxixzgupdhdsmzeu')
+        1
+        >>> Complexity().rareness('jjvkzlrjtraszzxrrztyrjhytvdjvvgujelareztwlkpuwutfw')
+        1
+        """
+        sub_words = list()
+        for i_front in range(0, len(password) - min_word_fragment_length + 1):
+            for i_back in range(i_front + min_word_fragment_length, len(password) + 1):
+                sub_words.append(password[i_front:i_back])
+
+        all_valid_com = set()
+        total_sub_word_length = 0
+        for sub_word in sub_words:
+            try:
+                all_valid_com.add(self.common_words[sub_word] / len(sub_word))
+                total_sub_word_length += len(sub_word)
+            except KeyError:
+                pass
+
+        try:
+            absolute_rareness = (((sum(all_valid_com, 0)/len(all_valid_com)) / len(self.common_words))
+                                 * (len(sub_words) / total_sub_word_length**2)
+                                 * (len(password) / total_sub_word_length))
+            # return absolute_rareness
+            return math.sqrt(absolute_rareness/absolute_rareness_cutoff) \
+                if absolute_rareness < absolute_rareness_cutoff else 1
+        except ZeroDivisionError:
+            return 1
+
+    def rareness2(self, password, min_word_fragment_length=3, commonness_of_non_word=50000):
+        """
+        A logical way to calculate rareness, but the speed is illogical for length > 40.
+        (length 45: 60 sec per test)
 
         :param password:
         :param int min_word_fragment_length:
         :param int commonness_of_non_word: an arbitrary value to improve commonness of 'poison'
         :return int: in range 0-1
-        >>> Complexity().rareness('thethethe')
+        >>> Complexity().rareness2('thethethe')
         0.0
-        >>> Complexity().rareness('poison')  # the last word in Google's list
+        >>> Complexity().rareness2('poison')  # the last word in Google's list
         0.19998
-        >>> Complexity().rareness('asdfegu')
+        >>> Complexity().rareness2('asdfegu')
         1
-        >>> Complexity().rareness('helloworld')
+        >>> Complexity().rareness2('helloworld')
         0.02537
-        >>> Complexity().rareness('verylongpassword')
+        >>> Complexity().rareness2('verylongpassword')
         0.006806666666666667
-        >>> Complexity().rareness('averylongpassword')
+        >>> Complexity().rareness2('averylongpassword')
         0.26282000000000005
-        >>> Complexity().rareness('djkhsdjkashdaslkdhas')
+        >>> Complexity().rareness2('djkhsdjkashdaslkdhas')
         0.31674
         """
-        def add_commonness_value(keywords):
-            nonlocal commonness_value
+        from time import time
 
-            commonness_list = set()
-            for keyword in keywords:
-                commonness_list.add(self.common_words.get(keyword, commonness_of_non_word)/commonness_of_non_word)
+        def get_min_commonness_value(commonness_list):
+            nonlocal commonness_value
 
             value = sum(commonness_list)/len(commonness_list)
             if value < commonness_value:
@@ -108,39 +171,48 @@ class Complexity(Pronounceablity):
             depth += 1
 
             for current in range(previous + min_word_fragment_length, len(password) - min_word_fragment_length + 1):
-                separators[depth] = current
+                try:
+                    separators[depth] = current
+                except IndexError:
+                    separators.append(current)
 
-                if depth < number_of_separators-1:
+                if depth < number_of_separators - 1:
                     recurse(current)
                 else:
-                    if separators not in used_separators:
-                        keywords = set()
-                        keywords.add(subwords[(0, separators[0])])
-                        for i in range(depth):
-                            keywords.add(subwords[(separators[i], separators[i + 1])])
-                        keywords.add(subwords[(separators[depth], len(password))])
-                        add_commonness_value(keywords)
-
-                        used_separators.append(separators)
+                    used_separators.add(tuple(separators))
 
             depth -= 1
 
-        subwords = dict()
+        start = time()
+        subword_commonness = dict()
         for i_front in range(0, len(password) - min_word_fragment_length + 1):
             for i_back in range(i_front + min_word_fragment_length, len(password) + 1):
-                subwords[(i_front, i_back)] = password[i_front:i_back]
+                subword_commonness[(i_front, i_back)] \
+                    = self.common_words.get(password[i_front:i_back], commonness_of_non_word)/commonness_of_non_word
+        print('subword complete', time()-start)
 
+        start = time()
         commonness_value = 1
+        used_separators = set()
         for number_of_separators in range(len(password)//min_word_fragment_length):
             if number_of_separators == 0:
-                keywords = set()
-                keywords.add(password)
-                add_commonness_value(keywords)
+                get_min_commonness_value\
+                    ({self.common_words.get(password, commonness_of_non_word)/commonness_of_non_word})
             else:
-                separators = [-1 for _ in range(number_of_separators + 1)]
-                used_separators = list()
+                separators = list()
                 depth = -1
                 recurse(0)
+        print('tuple listing complete', time()-start)
+
+        start = time()
+        for sep in used_separators:
+            commonness_list = set()
+            commonness_list.add(subword_commonness[(0, sep[0])])
+            for i in range(len(sep)-1):
+                commonness_list.add(subword_commonness[(sep[i], sep[i + 1])])
+            commonness_list.add(subword_commonness[(sep[-1], len(password))])
+            get_min_commonness_value(commonness_list)
+        print('get min complete', time()-start)
 
         return commonness_value
 
@@ -178,5 +250,5 @@ class Complexity(Pronounceablity):
 
 if __name__ == '__main__':
     import doctest
-    doctest.testmod()
+    doctest.testmod(verbose=True)
     # Complexity().rareness('helloworld')
