@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+nltk = "==3.2.5"
+six = "==1.11.0"
+Metaphone = "==0.6"
+PyYAML = "==3.12"
+pytest-doctestplus = "*"
+
+[dev-packages]
+pytest = "*"
+memorable-password = {git = "https://github.com/patarapolw/memorable-password.git", editable = true}
+randomsentence = {git = "https://github.com/patarapolw/randomsentence.git", editable = true}
+
+[requires]
+python_version = "3.6"

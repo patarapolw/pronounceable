@@ -25,3 +25,5 @@
 """
 import doctest
 doctest.testmod()
+
+__doctest_skip__ = ['*']

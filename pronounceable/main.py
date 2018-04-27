@@ -7,6 +7,8 @@ except ImportError:
 from pronounceable.digraph import DIGRAPHS_FREQUENCY
 from pronounceable.components import INITIAL_CONSONANTS, FINAL_CONSONANTS, double_vowels
 
+__doctest_skip__ = ['PronounceableWord.length', 'generate_word']
+
 
 class PronounceableWord:
     """
@@ -64,7 +66,7 @@ class PronounceableWord:
         :param min_length:
         :param max_length:
         :return:
-        >>> Pronounceable().length(6, 10)
+        >>> PronounceableWord().length(6, 10)
         'centte'
         """
         min_length = min_length or self.min_length

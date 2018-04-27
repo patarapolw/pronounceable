@@ -6,6 +6,8 @@ import math
 
 from pronounceable.dir import database_path
 
+__doctest_skip__ = ['Complexity.rareness2']
+
 
 def possible_syllables():
     d = cmudict.dict()
