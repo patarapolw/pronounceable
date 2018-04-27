@@ -230,6 +230,7 @@ class Complexity(Pronounceablity):
         1.0
         >>> Complexity.consecutiveness('PaSsWoRd')
         0.0
+        >>> Complexity.consecutiveness('yio')
         """
         consec = 0
         for i in range(len(password) - consecutive_length):
@@ -238,7 +239,10 @@ class Complexity(Pronounceablity):
             elif all([char.islower() for char in password[i:i+consecutive_length]]):
                 consec += 1
 
-        return consec / (len(password) - consecutive_length)
+        try:
+            return consec / (len(password) - consecutive_length)
+        except ZeroDivisionError:
+            return 0
 
     @staticmethod
     def non_char(password):
