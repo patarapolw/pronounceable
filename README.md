@@ -1,5 +1,7 @@
 # Pronounceable
 
+[![Build Status](https://travis-ci.org/patarapolw/pronounceable.svg?branch=master)](https://travis-ci.org/patarapolw/pronounceable)
+
 - Generate a random pronounceable word using Python 3 and secrets module (falls back to random module if Python < 3.6).
 - Calculate password complexity based on pronounceablity. > 10.0 is probably too complex for human to remember.
 
