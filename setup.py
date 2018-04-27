@@ -22,10 +22,8 @@ setup(
     packages=find_packages(exclude=['tests', 'dev', 'analysis']),  # Required
     install_requires=install_requires,  # Optional
     python_requires='>=3',
-    extras_require={  # Optional
-        'analysis': ['git+https://github.com/patarapolw/memorable-password.git',
-                     'git+https://github.com/patarapolw/randomsentence.git']
-    },
+    dependency_links=['git+https://github.com/patarapolw/memorable-password.git#egg=memorable-password',
+                      'git+https://github.com/patarapolw/randomsentence.git#egg=randomsentence'],
     package_data={  # Optional
         'pronounceable': ['database/*'],
     },
