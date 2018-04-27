@@ -231,6 +231,7 @@ class Complexity(Pronounceablity):
         >>> Complexity.consecutiveness('PaSsWoRd')
         0.0
         >>> Complexity.consecutiveness('yio')
+        0
         """
         consec = 0
         for i in range(len(password) - consecutive_length):
