@@ -21,7 +21,7 @@ setup(
     keywords='password password-analysis nltk word-synthesis',  # Optional
     packages=find_packages(exclude=['tests', 'dev', 'analysis']),  # Required
     install_requires=install_requires,  # Optional
-    python_requires='>=3',
+    python_requires='>=3.5',
     dependency_links=['git+https://github.com/patarapolw/memorable-password.git#egg=memorable-password',
                       'git+https://github.com/patarapolw/randomsentence.git#egg=randomsentence'],
     package_data={  # Optional
