@@ -3,18 +3,29 @@
 [![Build Status](https://travis-ci.org/patarapolw/pronounceable.svg?branch=master)](https://travis-ci.org/patarapolw/pronounceable)
 [![PyPI version shields.io](https://img.shields.io/pypi/v/pronounceable.svg)](https://pypi.python.org/pypi/pronounceable/)
 [![PyPI license](https://img.shields.io/pypi/l/pronounceable.svg)](https://pypi.python.org/pypi/pronounceable/)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/pronounceable.svg)](https://pypi.python.org/pypi/pronounceable/)
+[![PyPI status](https://img.shields.io/pypi/status/pronounceable.svg)](https://pypi.python.org/pypi/pronounceable/)
+[![Examples tested with pytest-readme](http://img.shields.io/badge/readme-tested-brightgreen.svg)](https://github.com/boxed/pytest-readme)
 
 - Generate a random pronounceable word using Python 3 and secrets module (falls back to random module if Python < 3.6).
 - Calculate password complexity based on pronounceablity. > 10.0 is probably too complex for human to remember.
 
 ## Usage
 
+Generation of password.
+
 ```pycon
->>> from pronounceable import PronounceableWord, generate_word, Pronounceablity, Complexity
+>>> from pronounceable import PronounceableWord, generate_word
 >>> PronounceableWord().length(8, 15)
 'terhtsadathe'
 >>> generate_word()
 'gloust'
+```
+
+Analysis of keywords and passwords' memorability
+
+```python
+>>> from pronounceable import Pronounceablity, Complexity
 >>> pr = Pronounceablity()
 >>> pr.syllable('terhtsadathe')
 6

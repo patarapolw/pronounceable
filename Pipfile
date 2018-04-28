@@ -17,6 +17,7 @@ randomsentence = {git = "https://github.com/patarapolw/randomsentence.git", edit
 setuptools = "*"
 wheel = "*"
 twine = "*"
+pytest-readme = "*"
 
 [requires]
 python_version = "3.6"
