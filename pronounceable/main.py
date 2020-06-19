@@ -77,7 +77,10 @@ class PronounceableWord:
 
         # When munging characters, we need to know where to start counting
         # letters from
-        length = min_length + randrange(max_length - min_length)
+        if max_length == min_length:
+            length = min_length
+        else:
+            length = min_length + randrange(max_length - min_length)
         char = self._generate_nextchar(self.total_sum, self.start_freq)
         a = ord('a')
         word = chr(char + a)
