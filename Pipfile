@@ -7,7 +7,7 @@ name = "pypi"
 nltk = "==3.2.5"
 six = "==1.11.0"
 Metaphone = "==0.6"
-PyYAML = "==3.12"
+PyYAML = "==5.4"
 
 [dev-packages]
 pytest = "*"
