@@ -1,4 +1,5 @@
-Metaphone==0.6
+-i https://pypi.org/simple/
+metaphone==0.6
 nltk==3.2.5
-PyYAML==3.12
+pyyaml==3.12
 six==1.11.0
